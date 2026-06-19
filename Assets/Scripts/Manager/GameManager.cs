@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     private float goldTimer = 0f;
     private float currentDPSTimer = 0f;
+    [SerializeField] private float tickInterval = 5f;
 
     private void Awake()
     {
@@ -25,6 +26,15 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        if(PlayerPrefs.HasKey("TotalGold"))
+        {
+            totalGold = double.Parse(PlayerPrefs.GetString("TotalGold"));
+        }
+        if(PlayerPrefs.HasKey("CurrentDPS"))
+        {
+            currentDPS = double.Parse(PlayerPrefs.GetString("CurrentDPS"));
+        }
     }
 
     private void Update()
@@ -32,11 +42,12 @@ public class GameManager : MonoBehaviour
         goldTimer += Time.deltaTime;
         currentDPSTimer += Time.deltaTime;
 
-        if(goldTimer >= 1f)
+        if(goldTimer >= tickInterval)
         {
             totalGold += currentDPS;
             OnGoldChanged?.Invoke(totalGold);
             goldTimer = 0f;
+            SaveGame();
         }
     }
 
@@ -64,5 +75,15 @@ public class GameManager : MonoBehaviour
 
         currentDPS = newDPS;
         OnDPSChanged?.Invoke(currentDPS);
+    }
+
+    public void SaveGame()
+    {
+        PlayerPrefs.SetString("TotalGold", totalGold.ToString());
+        PlayerPrefs.SetString("CurrentDPS", currentDPS.ToString());
+        for(int i = 0; i < UpgradeManager.Instance.upgrades.Count; i++)
+        {
+            PlayerPrefs.SetInt($"UpgradeLevel_{i}", UpgradeManager.Instance.upgrades[i].currentLevel);
+        }
     }
 }

@@ -19,6 +19,15 @@ public class UpgradeManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        if(PlayerPrefs.HasKey("UpgradeLevels"))
+        {
+            string[] levels = PlayerPrefs.GetString("UpgradeLevels").Split(',');
+            for(int i = 0; i < upgrades.Count && i < levels.Length; i++)
+            {
+                upgrades[i].currentLevel = int.Parse(levels[i]);
+            }
+        }
     }
 
     public void TryBuyUpgrade(UpgradeData data)
