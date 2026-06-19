@@ -44,4 +44,9 @@ public class GameManager : MonoBehaviour
         totalGold += amount;
         OnGoldChanged?.Invoke(totalGold);
     }
+
+    public void DamageTarget()
+    {
+        AddGold(1);
+    }
 }
