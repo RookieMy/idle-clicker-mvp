@@ -15,6 +15,6 @@ public class UIManager : MonoBehaviour
 
     public void UpdateGoldDisplay(double totalGold)
     {
-        goldText.text = $"Gold: {totalGold:N0}";
+        goldText.text = "Gold: " + NumberFormatter.FormatNumber(GameManager.Instance.TotalGold);
     }
 }
