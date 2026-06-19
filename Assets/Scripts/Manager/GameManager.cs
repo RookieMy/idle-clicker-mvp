@@ -5,10 +5,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [SerializeField] private double totalGold;
-    [SerializeField] private double currentDPS;
+    [SerializeField] private double totalGold = 0;
+    [SerializeField] private double currentDPS = 0;
 
     public static Action<double> OnGoldChanged;
+    public static Action<double> OnDPSChanged;
 
     private float goldTimer = 0f;
     private float currentDPSTimer = 0f;
@@ -39,6 +40,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public double TotalGold => totalGold;
+
     public void AddGold(double amount)
     {
         totalGold += amount;
@@ -48,5 +51,18 @@ public class GameManager : MonoBehaviour
     public void DamageTarget()
     {
         AddGold(1);
+    }
+
+    public void RecalculateDPS()
+    {
+        double newDPS = 0;
+
+        foreach(UpgradeData data in UpgradeManager.Instance.upgrades)
+        {
+            newDPS += data.dpsBonus * data.currentLevel;
+        }
+
+        currentDPS = newDPS;
+        OnDPSChanged?.Invoke(currentDPS);
     }
 }
