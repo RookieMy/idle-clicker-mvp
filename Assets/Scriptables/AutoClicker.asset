@@ -12,3 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29857cf268a966b43874c2d4b9c3512e, type: 3}
   m_Name: AutoClicker
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
+  upgradeName: Auto_Clicker
+  baseCost: 10
+  costMultiplier: 1.2
+  dpsBonus: 1
+  currentLevel: 0
