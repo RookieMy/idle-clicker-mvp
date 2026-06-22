@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -62,6 +63,8 @@ public class GameManager : MonoBehaviour
     public void DamageTarget()
     {
         AddGold(1);
+        Vector2 clickPos = Pointer.current.position.ReadValue();
+        ObjectPoolManager.Instance.GetPooledObject(clickPos, "+1");
     }
 
     public void RecalculateDPS()
