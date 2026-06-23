@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29857cf268a966b43874c2d4b9c3512e, type: 3}
   m_Name: MasterWorker
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: 
-  baseCost: 0
-  costMultiplier: 0
-  dpsBonus: 0
+  upgradeName: MasterWorker
+  baseCost: 1100
+  costMultiplier: 1.15
+  dpsBonus: 95
   currentLevel: 0
