@@ -89,4 +89,13 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt($"UpgradeLevel_{i}", UpgradeManager.Instance.upgrades[i].currentLevel);
         }
     }
+
+    public void ResetGame()
+    {
+        totalGold = 0;
+        currentDPS = 0;
+        OnGoldChanged?.Invoke(totalGold);
+        OnDPSChanged?.Invoke(currentDPS);
+        PlayerPrefs.DeleteAll();
+    }
 }
