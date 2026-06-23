@@ -28,14 +28,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if(PlayerPrefs.HasKey("TotalGold"))
-        {
-            totalGold = double.Parse(PlayerPrefs.GetString("TotalGold"));
-        }
-        if(PlayerPrefs.HasKey("CurrentDPS"))
-        {
-            currentDPS = double.Parse(PlayerPrefs.GetString("CurrentDPS"));
-        }
+        LoadGame();
     }
 
     private void Update()
@@ -84,10 +77,7 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetString("TotalGold", totalGold.ToString());
         PlayerPrefs.SetString("CurrentDPS", currentDPS.ToString());
-        for(int i = 0; i < UpgradeManager.Instance.upgrades.Count; i++)
-        {
-            PlayerPrefs.SetInt($"UpgradeLevel_{i}", UpgradeManager.Instance.upgrades[i].currentLevel);
-        }
+        UpgradeManager.Instance.SaveUpgradeLevels();
     }
 
     public void ResetGame()
@@ -97,5 +87,22 @@ public class GameManager : MonoBehaviour
         OnGoldChanged?.Invoke(totalGold);
         OnDPSChanged?.Invoke(currentDPS);
         PlayerPrefs.DeleteAll();
+    }
+
+    public void LoadGame()
+    {
+        if(PlayerPrefs.HasKey("TotalGold"))
+        {
+            totalGold = double.Parse(PlayerPrefs.GetString("TotalGold"));
+            OnGoldChanged?.Invoke(totalGold);
+        }
+        if(PlayerPrefs.HasKey("CurrentDPS"))
+        {
+            currentDPS = double.Parse(PlayerPrefs.GetString("CurrentDPS"));
+            OnDPSChanged?.Invoke(currentDPS);
+        }
+        
+        UpgradeManager.Instance.LoadUpgradeLevels();
+        RecalculateDPS();
     }
 }

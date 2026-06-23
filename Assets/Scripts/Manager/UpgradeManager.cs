@@ -19,17 +19,6 @@ public class UpgradeManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        if(PlayerPrefs.HasKey("UpgradeLevels"))
-        {
-            string[] levels = PlayerPrefs.GetString("UpgradeLevels").Split(',');
-            for(int i = 0; i < upgrades.Count && i < levels.Length; i++)
-            {
-                upgrades[i].currentLevel = int.Parse(levels[i]);
-            }
-        }
-
-        LoadUpgradeLevels();
     }
 
     public void TryBuyUpgrade(UpgradeData data)
@@ -53,18 +42,19 @@ public class UpgradeManager : MonoBehaviour
 
     public void SaveUpgradeLevels()
     {
-        string levels = string.Join(",", upgrades.ConvertAll(u => u.currentLevel.ToString()).ToArray());
-        PlayerPrefs.SetString("UpgradeLevels", levels);
+        for (int i = 0; i < UpgradeManager.Instance.upgrades.Count; i++)
+        {
+            PlayerPrefs.SetInt($"UpgradeLevel_{i}", UpgradeManager.Instance.upgrades[i].currentLevel);
+        }
     }
 
     public void LoadUpgradeLevels()
     {
-        if(PlayerPrefs.HasKey("UpgradeLevels"))
+        for (int i = 0; i < UpgradeManager.Instance.upgrades.Count; i++)
         {
-            string[] levels = PlayerPrefs.GetString("UpgradeLevels").Split(',');
-            for(int i = 0; i < upgrades.Count && i < levels.Length; i++)
+            if (PlayerPrefs.HasKey($"UpgradeLevel_{i}"))
             {
-                upgrades[i].currentLevel = int.Parse(levels[i]);
+                upgrades[i].currentLevel = PlayerPrefs.GetInt($"UpgradeLevel_{i}");
             }
         }
     }
