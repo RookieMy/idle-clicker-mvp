@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,9 +9,11 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private double totalGold = 0;
     [SerializeField] private double currentDPS = 0;
+    [SerializeField] private float timeToAutoSave = 60f;
 
     public static Action<double> OnGoldChanged;
     public static Action<double> OnDPSChanged;
+    public static Action<double> OnOfflineEarningsCalculated;
 
     private float goldTimer = 0f;
     private float currentDPSTimer = 0f;
@@ -29,6 +32,7 @@ public class GameManager : MonoBehaviour
         }
 
         LoadGame();
+        StartCoroutine(AutoSaveCoroutine());
     }
 
     private void Update()
@@ -41,7 +45,16 @@ public class GameManager : MonoBehaviour
             totalGold += currentDPS;
             OnGoldChanged?.Invoke(totalGold);
             goldTimer = 0f;
+        }
+    }
+
+    private IEnumerator AutoSaveCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(timeToAutoSave);
             SaveGame();
+            Debug.Log("Game auto-saved.");
         }
     }
 
@@ -77,6 +90,7 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetString("TotalGold", totalGold.ToString());
         PlayerPrefs.SetString("CurrentDPS", currentDPS.ToString());
+        PlayerPrefs.SetString("LastTimePlayed", DateTime.UtcNow.ToString());
         UpgradeManager.Instance.SaveUpgradeLevels();
     }
 
@@ -104,5 +118,21 @@ public class GameManager : MonoBehaviour
         
         UpgradeManager.Instance.LoadUpgradeLevels();
         RecalculateDPS();
+
+        if(PlayerPrefs.HasKey("LastTimePlayed"))
+        {
+            DateTime lastTimePlayed = DateTime.Parse(PlayerPrefs.GetString("LastTimePlayed"));
+            TimeSpan timeAway = DateTime.UtcNow - lastTimePlayed;
+            double offlineEarnings = currentDPS * timeAway.TotalSeconds;
+            totalGold += offlineEarnings;
+            OnGoldChanged?.Invoke(totalGold);
+            if (offlineEarnings > 0)
+                OnOfflineEarningsCalculated?.Invoke(offlineEarnings);
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveGame();
     }
 }
